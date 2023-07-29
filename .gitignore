@@ -1,4 +1,5 @@
 __pycache__
 .env
 .idea
-data
+audio_tube/data
+audio_tube/debug.log
