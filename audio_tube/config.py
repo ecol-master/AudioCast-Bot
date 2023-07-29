@@ -14,4 +14,9 @@ def get_config():
     )
 
 
+on_delete_filenames = []
 OUTPUT_DIR = "data"
+
+# prefer preview image sizes
+PREVIEW_HEIGHT = 188
+PREVIEW_WIDTH = 336
