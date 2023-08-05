@@ -5,6 +5,7 @@ import logging
 
 
 def del_downloaded_files():
+    print("Тут")
     for fn in on_delete_filenames:
         _del_downloaded_files_by_fn(fn)
     on_delete_filenames.clear()

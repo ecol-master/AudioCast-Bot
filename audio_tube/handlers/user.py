@@ -1,8 +1,7 @@
 from aiogram import Router, types, Bot
 from aiogram.filters import Command
 from podcast import make_podcast, CantDownloadAudioError
-from utils import get_message_url
-from utils import message_texts
+from service import message_texts, get_message_urls
 from config import on_delete_filenames
 import logging
 
@@ -16,18 +15,17 @@ async def cmd_message(message: types.Message):
 
 @router.message()
 async def process_send_url(message: types.Message, bot: Bot):
-    urls = get_message_url(message)
+    urls = get_message_urls(message)
     if not urls:
         await message.answer(text="В вашем сообщении нету ссылки на видео.")
         return
 
     load_message = await message.answer(text="Downloading...🕔")
     try:
-        podcast = make_podcast(urls[0])
+        podcast, filename = make_podcast(urls[0])
         await bot.send_audio(chat_id=message.chat.id, **podcast.__dict__)
         await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
-        # on_delete_filenames.append(podcast.filename)
-
+        on_delete_filenames.append(filename)
     except CantDownloadAudioError:
         await message.answer(text="Check your video url!")
         return

@@ -1,7 +1,7 @@
 from aiogram import types
 
 
-def get_message_url(message: types.Message) -> list[str]:
+def get_message_urls(message: types.Message) -> list[str]:
     entities: list[types.MessageEntity] = message.entities
     if not entities:
         return []

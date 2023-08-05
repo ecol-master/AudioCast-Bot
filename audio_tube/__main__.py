@@ -1,20 +1,19 @@
 from aiogram import Bot, Dispatcher
 from handlers import user
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from service import del_downloaded_files
+from config import get_bot_config
 import asyncio
 import logging
-from config import get_config
-from utils.schedule import del_downloaded_files
 
 
 async def main():
     logging.basicConfig(filename="debug.log", filemode="w", level=logging.DEBUG)
 
     scheduler = AsyncIOScheduler()
-    scheduler.add_job(del_downloaded_files, 'cron', day_of_week='mon-fri', hour=16,
-                      minute=23)
+    scheduler.add_job(del_downloaded_files, 'interval', minutes=5)
 
-    config = get_config()
+    config = get_bot_config()
 
     bot = Bot(token=config.bot_token)
     dp = Dispatcher()
