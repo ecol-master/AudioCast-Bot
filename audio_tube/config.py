@@ -14,7 +14,6 @@ def get_bot_config() -> Config:
     )
 
 
-on_delete_filenames = []
 OUTPUT_DIR = "data"
 
 # prefer preview image sizes
