@@ -18,6 +18,10 @@ class CantDownloadAudioError(Exception):
     """Program can't download video."""
 
 
+class DurationLimitError(Exception):
+    """Too long podcast for download."""
+
+
 class YDLLogger:
     def debug(self, msg):
         # For compatibility with youtube-dl, both debug and info are passed into debug

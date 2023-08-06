@@ -19,3 +19,6 @@ OUTPUT_DIR = "data"
 # prefer preview image sizes
 PREVIEW_HEIGHT = 138
 PREVIEW_WIDTH = 246
+
+# max podcast duration: 2 hours and 30 minutes (value in a seconds)
+MAX_PODCAST_DURATION = 9000

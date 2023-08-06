@@ -1,6 +1,6 @@
 from aiogram import Router, types, Bot
 from aiogram.filters import Command
-from podcast import make_podcast, CantDownloadAudioError
+from podcast import PodcastMaker, CantDownloadAudioError, DurationLimitError
 from service import message_texts, get_message_urls, rm_downloaded_files
 import logging
 
@@ -21,13 +21,17 @@ async def process_send_url(message: types.Message, bot: Bot):
 
     load_message = await message.answer(text="Downloading...🕔")
     try:
-        podcast, filename = make_podcast(urls[0])
+        maker = PodcastMaker(url=urls[0])
+        podcast = maker.get_podcast_data()
+        await maker.download()
+
         await bot.send_audio(chat_id=message.chat.id, **podcast.__dict__)
         await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
-        await rm_downloaded_files(filename)
+        await rm_downloaded_files(maker.filename)
     except CantDownloadAudioError:
         await message.answer(text="Check your video url!")
-        return
+    except DurationLimitError:
+        await message.answer(text="This podcast is too long.")
     except Exception as _err:
         logging.error(f"{_err}")
     finally:
