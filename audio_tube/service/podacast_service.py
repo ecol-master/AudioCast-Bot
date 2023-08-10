@@ -6,12 +6,17 @@ from aiogram import types
 
 @dataclass
 class Podcast:
+    filename: str
     audio: types.FSInputFile
     caption: str
     title: str
     performer: str
     duration: str
     thumb: types.FSInputFile
+
+    def as_dict(self):
+        values = self.__dict__
+        return {k: values[k] for k in values.keys() if k != "filename"}
 
 
 class CantDownloadAudioError(Exception):
@@ -26,17 +31,22 @@ class YDLLogger:
     def debug(self, msg):
         # For compatibility with youtube-dl, both debug and info are passed into debug
         # You can distinguish them by the prefix '[debug] '
-        if msg.startswith("[youtube] "):
-            self.info(msg)
+        logging.debug(msg)
 
-    def info(self, msg):
+    def info(cls, msg):
         logging.info(msg)
+
+    def warning(cls, msg):
+        logging.warning(msg)
+
+    def error(cls, msg):
+        logging.error(msg)
 
 
 YDL_OPTIONS = {
-    # "logger": YTDlpLogger(),
-    'writesubtitles': True,
-    'skip-download': True,
+    "logger": YDLLogger(),
+    'writesubtitles': False,
+    'skip-download': False,
     'outtmpl': f'./{OUTPUT_DIR}/%(title)s.%(ext)s',
     "format": "139"
 }

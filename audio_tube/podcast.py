@@ -1,81 +1,89 @@
-import asyncio
 from yt_dlp import YoutubeDL
 from yt_dlp.utils import UnsupportedError, DownloadError
-from service import Podcast, YDL_OPTIONS, CantDownloadAudioError, DurationLimitError
+from service import Podcast, CantDownloadAudioError, DurationLimitError, YDL_OPTIONS
 from pathlib import Path
 import requests
 from config import OUTPUT_DIR, PREVIEW_WIDTH, PREVIEW_HEIGHT, MAX_PODCAST_DURATION
 from aiogram import types
 
+ydl = YoutubeDL(YDL_OPTIONS)
 
-class PodcastMaker:
-    def __init__(self, url: str):
-        self.url = url
-        self.ydl = YoutubeDL(YDL_OPTIONS)
-        self.podcast_info = self.ydl.extract_info(url, download=False)
-        self.filename = self._parse_filename()
 
-    def get_podcast_data(self) -> Podcast:
-        duration = self.podcast_info.get("duration", 0)
-        if duration > MAX_PODCAST_DURATION:
-            raise DurationLimitError
-        return Podcast(
-            audio=types.FSInputFile(path=Path("data", f"{self.filename}.m4a")),
-            caption=self._parse_caption(),
-            title=self.podcast_info.get("title", ""),
-            performer=self.podcast_info.get("uploader", ""),
-            duration=duration,
-            thumb=types.FSInputFile(path=Path("data", f"{self.filename}.jpg"))
-        )
+def get_podcast(url: str) -> Podcast:
+    info = ydl.extract_info(url, download=False)
+    validate_user_data(info)
 
-    async def download(self):
-        tasks = [
-            asyncio.create_task(self.download_audio()),
-            asyncio.create_task(self.download_preview())
-        ]
-        await asyncio.gather(*tasks)
+    preview_url = _parse_preview_url(info=info)
+    filename = _parse_filename(info=info)
 
-    async def download_audio(self):
-        try:
-            self.ydl.download(self.url)
-        except DownloadError:
-            raise CantDownloadAudioError
-        except UnsupportedError:
-            raise CantDownloadAudioError
+    download(url=url, preview_url=preview_url, filename=filename)
+    return get_podcast_data(filename=filename, info=info)
 
-    async def download_preview(self):
-        headers = {
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.0"
-        }
-        preview_url = self._parse_preview_url()
-        response = requests.get(url=preview_url, headers=headers, stream=True)
-        if response.status_code == 200:
-            preview_path = Path(f"{OUTPUT_DIR}", f"{self.filename}.jpg")
-            with open(f"{preview_path}", 'wb') as f:
-                f.write(response.content)
 
-    def _parse_caption(self) -> str:
-        caption = self.podcast_info.get("description", "")
-        if len(caption) > 150:
-            return f"{caption[:150]}..."
-        return caption
+def validate_user_data(info: dict):
+    duration = info.get("duration", 0)
+    if duration > MAX_PODCAST_DURATION:
+        raise DurationLimitError
 
-    def _parse_preview_url(self) -> str:
-        thumbnails = self.podcast_info.get("thumbnails", [])
-        if not thumbnails:
-            raise CantDownloadAudioError
-        preview_resolution = f"{PREVIEW_WIDTH}x{PREVIEW_HEIGHT}"
-        thumb = [th for th in thumbnails if
-                 th.get("resolution", "") == preview_resolution]
-        if not thumb:
-            return self.podcast_info.get("thumbnail", "")
-        else:
-            return thumb[0]["url"]
 
-    def _parse_filename(self) -> str:
-        name = self.ydl.prepare_filename(self.podcast_info)
-        if name.startswith(f"{OUTPUT_DIR}\\"):
-            name = name[len(OUTPUT_DIR) + 1:]
-        filename = f"{'.'.join(name.split('.')[:-1])}"
-        return filename
+def get_podcast_data(filename: str, info: dict) -> Podcast:
+    return Podcast(
+        filename=filename,
+        audio=types.FSInputFile(path=Path("data", f"{filename}.m4a")),
+        caption=_validate_caption(caption=info.get("description", "")),
+        title=info.get("title", ""),
+        performer=info.get("uploader", ""),
+        duration=info.get("duration", 0),
+        thumb=types.FSInputFile(path=Path("data", f"{filename}.jpg")),
+
+    )
+
+
+def download(url: str, preview_url: str, filename: str) -> None:
+    try:
+        ydl.download(url)
+        download_preview(filename=filename, preview_url=preview_url)
+    except DownloadError:
+        raise CantDownloadAudioError
+    except UnsupportedError:
+        raise CantDownloadAudioError
+
+
+def download_preview(filename: str, preview_url: str):
+    headers = {
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.0"
+    }
+    response = requests.get(url=preview_url, headers=headers, stream=True)
+    if response.status_code == 200:
+        preview_path = Path(f"{OUTPUT_DIR}", f"{filename}.jpg")
+        with open(f"{preview_path}", 'wb') as f:
+            f.write(response.content)
+
+
+def _validate_caption(caption: str) -> str:
+    # caption = podcast_info.get("description", "")
+    if len(caption) > 150:
+        return f"{caption[:150]}..."
+    return caption
+
+
+def _parse_preview_url(info: dict) -> str:
+    thumbnails = info.get("thumbnails", [])
+    if not thumbnails:
+        raise CantDownloadAudioError
+    preview_resolution = f"{PREVIEW_WIDTH}x{PREVIEW_HEIGHT}"
+    thumb = [th for th in thumbnails if
+             th.get("resolution", "") == preview_resolution]
+    if not thumb:
+        return info.get("thumbnail", "")
+    else:
+        return thumb[0]["url"]
+
+
+def _parse_filename(info: str) -> str:
+    name = ydl.prepare_filename(info)
+    if name.startswith(f"{OUTPUT_DIR}\\"):
+        name = name[len(OUTPUT_DIR) + 1:]
+    filename = f"{'.'.join(name.split('.')[:-1])}"
+    return filename
