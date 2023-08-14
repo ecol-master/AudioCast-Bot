@@ -3,3 +3,4 @@ __pycache__
 .idea
 audio_tube/data
 audio_tube/debug.log
+audio_tube/db
