@@ -11,4 +11,6 @@ class User(SqlAlchemyBase):
     telegram_id = sa.Column(sa.Integer)
     date_start_bot = sa.Column(sa.DateTime, default=datetime.datetime.now)
     date_last_podcast_download = sa.Column(sa.DateTime)
+    count_of_downloaded_podcasts = sa.Column(sa.Integer, default=0)
+
     settings = relationship("UserSettings", uselist=False, backref="users")
