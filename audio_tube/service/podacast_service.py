@@ -31,7 +31,8 @@ class YDLLogger:
     def debug(self, msg):
         # For compatibility with youtube-dl, both debug and info are passed into debug
         # You can distinguish them by the prefix '[debug] '
-        logging.debug(msg)
+        if not msg.startswith("[download] "):
+            logging.debug(msg)
 
     def info(cls, msg):
         logging.info(msg)

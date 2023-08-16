@@ -22,3 +22,6 @@ PREVIEW_WIDTH = 246
 
 # maximum podcast duration in seconds
 MAX_PODCAST_DURATION = 9000
+
+# minimum difference between two loads (minutes)
+MIN_DIFF_DOWNLOAD = 5
