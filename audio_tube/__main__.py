@@ -1,26 +1,25 @@
 from aiogram import Bot, Dispatcher
-from handlers import user
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from handlers import user, set_settings
+from config import get_bot_config
+from models import db_session
+from service import set_bot_commands
 import asyncio
 import logging
-from config import get_config
-from utils.schedule import del_downloaded_files
 
 
 async def main():
     logging.basicConfig(filename="debug.log", filemode="w", level=logging.DEBUG)
+    db_session.global_init("db/database.db")
 
-    scheduler = AsyncIOScheduler()
-    scheduler.add_job(del_downloaded_files, 'cron', day_of_week='mon-fri', hour=16,
-                      minute=23)
+    config = get_bot_config()
 
-    config = get_config()
+    bot = Bot(token=config.bot_token, parse_mode="HTML")
+    await set_bot_commands(bot)
 
-    bot = Bot(token=config.bot_token)
     dp = Dispatcher()
+    dp.include_router(set_settings.router)
     dp.include_router(user.router)
 
-    scheduler.start()
     await dp.start_polling(bot)
 
 
