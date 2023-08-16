@@ -65,3 +65,28 @@ def update_date_last_podcast_download(telegram_id: int, session: Session) -> Use
     session.add(user)
     session.commit()
     return user
+
+
+def update_count_of_downloaded_podcast(telegram_id: int, session: Session) -> User:
+    user = session.query(User).filter(User.telegram_id == telegram_id).first()
+    user.count_of_downloaded_podcasts += 1
+    session.add(user)
+    session.commit()
+    return user
+
+
+# admin panel
+
+def get_all_users_count(session: Session) -> int:
+    return len(session.query(User).all())
+
+
+def get_count_of_active_users_per_days(session: Session, days: int) -> int:
+    return len(session.query(User).filter(
+        User.date_last_podcast_download > datetime.datetime.now() -
+        datetime.timedelta(days=days)).all())
+    
+
+def get_total_count_of_downloaded_podcasts(session: Session) -> int:
+    users = session.query(User).all()
+    return sum(user.count_of_downloaded_podcasts for user in users)

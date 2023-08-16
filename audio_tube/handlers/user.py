@@ -13,13 +13,15 @@ router = Router()
 
 @router.message(Command("start"))
 async def cmd_message(message: types.Message):
+    await message.answer(text=message_texts.GREETINGS)
+
+    # Добавление нового пользователя в базу данных
     session = db_session.create_session()
     if not db_service.is_user_already_created(telegram_id=message.from_user.id,
                                               session=session):
         user = db_service.create_user(telegram_id=message.from_user.id, session=session)
         settings = db_service.create_user_settings(user_id=user.id, session=session)
         logging.info(f"Created new user: telegram id - {user.telegram_id}")
-    await message.answer(text=message_texts.GREETINGS)
 
 
 def can_download(func):
@@ -32,10 +34,14 @@ def can_download(func):
         session = db_session.create_session()
         if db_service.is_can_download_podcast(telegram_id=message.from_user.id,
                                               session=session):
+            await func(message, bot, session, urls[0])
+
+            # Обновляю количество скачанных подкастов пользователем
+            db_service.update_count_of_downloaded_podcast(
+                telegram_id=message.from_user.id, session=session)
             # Ставлю новое время начала загрузки
             db_service.update_date_last_podcast_download(
                 telegram_id=message.from_user.id, session=session)
-            await func(message, bot, session, urls[0])
         else:
             await message.answer(text=message_texts.DOWNLOAD_PODCAST_IS_NO_ABILITY)
 

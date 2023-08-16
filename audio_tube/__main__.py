@@ -1,5 +1,5 @@
 from aiogram import Bot, Dispatcher
-from handlers import user, set_settings
+from handlers import user, set_settings, admin
 from config import get_bot_config
 from models import db_session
 from service import set_bot_commands
@@ -18,6 +18,7 @@ async def main():
 
     dp = Dispatcher()
     dp.include_router(set_settings.router)
+    dp.include_router(admin.router)
     dp.include_router(user.router)
 
     await dp.start_polling(bot)
