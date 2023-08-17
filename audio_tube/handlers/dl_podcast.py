@@ -1,27 +1,14 @@
-from aiogram import Router, types, Bot
-from aiogram.filters import Command
-from podcast import get_podcast
-from service import message_texts, get_message_urls, rm_downloaded_files, \
-    CantDownloadAudioError, DurationLimitError
+from aiogram import types, Bot, Router
+from service import get_message_urls, db_service, message_texts, \
+    CantDownloadAudioError, DurationLimitError, rm_downloaded_files
 from models import db_session
+from models.user_settings import UserSettings
 from sqlalchemy.orm import Session
-from service import db_service
+from podcast import get_podcast
 import logging
 
+
 router = Router()
-
-
-@router.message(Command("start"))
-async def cmd_message(message: types.Message):
-    await message.answer(text=message_texts.GREETINGS)
-
-    # Добавление нового пользователя в базу данных
-    session = db_session.create_session()
-    if not db_service.is_user_already_created(telegram_id=message.from_user.id,
-                                              session=session):
-        user = db_service.create_user(telegram_id=message.from_user.id, session=session)
-        settings = db_service.create_user_settings(user_id=user.id, session=session)
-        logging.info(f"Created new user: telegram id - {user.telegram_id}")
 
 
 def can_download(func):
@@ -54,12 +41,13 @@ async def process_podcast_download(message: types.Message, bot: Bot, session: Se
                                    url: str):
     load_message = await message.answer(text="Downloading...🕔")
     try:
-        user_settings = db_service.get_user_settings(telegram_id=message.from_user.id,
+        user_settings: UserSettings = db_service.get_user_settings(telegram_id=message.from_user.id,
                                                      session=session)
         podcast = get_podcast(url, settings=user_settings)
         await bot.send_audio(chat_id=message.chat.id, **podcast.as_dict())
-
-        await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
+        
+        if user_settings.is_del_link:
+            await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
         await rm_downloaded_files(podcast.filename)
 
     except CantDownloadAudioError:

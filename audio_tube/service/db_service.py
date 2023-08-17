@@ -74,6 +74,13 @@ def update_count_of_downloaded_podcast(telegram_id: int, session: Session) -> Us
     session.commit()
     return user
 
+def update_setting_is_del_link(telegram_id: int, session: Session, is_del_link: bool) -> UserSettings:
+    user = session.query(User).filter(User.telegram_id == telegram_id).first()
+    settings: UserSettings = user.settings
+    settings.is_del_link = is_del_link
+    session.add(settings)
+    session.commit()
+    return settings
 
 # admin panel
 

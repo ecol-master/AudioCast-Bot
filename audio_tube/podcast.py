@@ -36,7 +36,7 @@ def get_podcast_data(settings: UserSettings, filename: str, info: dict) -> Podca
         title=info.get("title", ""),
         performer=info.get("uploader", ""),
         duration=info.get("duration", 0),
-        thumb=types.FSInputFile(path=Path("data", f"{filename}.jpg")),
+        thumbnail=types.FSInputFile(path=Path("data", f"{filename}.jpg")),
 
     )
 

@@ -29,3 +29,18 @@ async def rm_downloaded_files(filename: str):
 async def remove_file(file: str):
     os.remove(Path(f"{OUTPUT_DIR}", file))
     logging.info(f"Delete file: {file}")
+
+
+
+def validate_new_caption_length(new_length: str) -> int:
+    if not new_length.isdecimal() or not new_length:
+        raise ValueError
+    new_length = int(new_length)
+    return 150 if new_length > 150 else new_length
+
+def validate_answer_del_link(ans: str) -> bool:
+    if ans.strip().lower() == "да":
+        return True
+    if ans.strip().lower() == "нет":
+        return False
+    raise ValueError
