@@ -13,13 +13,14 @@ config = get_bot_config()
 
 @router.message(Command("start"))
 async def cmd_start(message: types.Message) -> None:
+    lang = "ru" if message.from_user.language_code == "ru" else "en"
     await message.answer(text=message_texts.GREETINGS)
 
     # Добавление нового пользователя в базу данных
     session = db_session.create_session()
     if not db_service.is_user_already_created(telegram_id=message.from_user.id,
                                               session=session):
-        user = db_service.create_user(telegram_id=message.from_user.id, session=session)
+        user = db_service.create_user(telegram_id=message.from_user.id, session=session, lang=lang)
         settings = db_service.create_user_settings(user_id=user.id, session=session)
         logging.info(f"Created new user: telegram id - {user.telegram_id}")
 

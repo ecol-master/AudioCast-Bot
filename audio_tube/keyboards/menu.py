@@ -7,6 +7,7 @@ class MenuCallback(CallbackData, prefix="menu"):
     action: str
     stage: int
 
+# Menu Settings
 #
 def get_menu_kb() -> types.InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
@@ -42,3 +43,16 @@ def get_settings_del_link_kb() -> types.ReplyKeyboardMarkup:
         resize_keyboard=True,
         input_field_placeholder="Ваш ответ"
     )
+
+# Menu Languages
+
+def get_languages_kb() -> types.InlineKeyboardMarkup:
+    builder = InlineKeyboardBuilder()
+    builder.row(
+        types.InlineKeyboardButton(text="🇷🇺 Русский", callback_data=MenuCallback(action="choose_ru_lang", stage=2).pack()),
+        types.InlineKeyboardButton(text="🇬🇧 English", callback_data=MenuCallback(action="choose_en_lang", stage=2).pack())
+    )
+    builder.row(
+        types.InlineKeyboardButton(text="<< Назад", callback_data=MenuCallback(action="back", stage=2).pack())
+    )
+    return builder.as_markup()

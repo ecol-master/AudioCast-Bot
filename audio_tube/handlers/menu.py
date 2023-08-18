@@ -1,7 +1,7 @@
 from aiogram import Router, types, F, Bot
 from aiogram.filters import Command
 from keyboards import MenuCallback, get_menu_kb, get_settings_kb, \
-            get_settings_del_link_kb
+            get_settings_del_link_kb, get_languages_kb
 from models import db_session
 from service import db_service, message_texts, validate_new_caption_length, \
     validate_answer_del_link
@@ -110,7 +110,7 @@ async def process_menu_del_link(message: types.Message, state: FSMContext) -> No
 
 # menu callback: back
 
-@router.callback_query(MenuCallback.filter(F.action == "back" and F.stage == 2))
+@router.callback_query(MenuCallback.filter((F.action == "back") & (F.stage == 2)))
 async def menu_back(query: types.CallbackQuery, bot: Bot) -> None:
     await bot.edit_message_reply_markup(
         chat_id=query.message.chat.id,
@@ -121,3 +121,28 @@ async def menu_back(query: types.CallbackQuery, bot: Bot) -> None:
 
 
 # LANGUAGES BUTTON
+@router.callback_query(MenuCallback.filter(F.action == "languages"))
+async def menu_languages(query: types.CallbackQuery, bot: Bot) -> None:
+    await query.answer()
+    await bot.edit_message_text(
+        chat_id=query.message.chat.id,
+        message_id=query.message.message_id,
+        text="Choose the bot's language",
+        reply_markup=get_languages_kb()
+    )
+
+
+@router.callback_query(MenuCallback.filter(F.action == "choose_ru_lang"))
+async def menu_language_russian(query: types.CallbackQuery, bot: Bot) -> None:
+    await query.answer(text="Set Russian language")
+
+    session = db_session.create_session()
+    db_service.update_lang(telegram_id=query.from_user.id, session=session, new_lang="ru")
+
+@router.callback_query(MenuCallback.filter(F.action == "choose_en_lang"))
+async def menu_language_english(query: types.CallbackQuery, bot: Bot) -> None:
+    await query.answer(text="Set English language")
+    
+    session = db_session.create_session()
+    db_service.update_lang(telegram_id=query.from_user.id, session=session, new_lang="en")
+
