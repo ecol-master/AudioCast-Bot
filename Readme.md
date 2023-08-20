@@ -57,7 +57,7 @@ git init
 
 Склонируем содержимое проекта:
 ```
-git pull https://github.com/ecol-master/AudioTube-Bot master
+git pull https://github.com/ecol-master/AudioCast-Bot master
 ```
 Создадим виртуальное окружение:
 ```
