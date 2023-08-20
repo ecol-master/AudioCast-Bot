@@ -4,6 +4,7 @@ from aiogram import BaseMiddleware, types
 from service import db_service
 from models import db_session
 
+
 class TranslatorRunnerMiddleware(BaseMiddleware):
     async def __call__(
             self,
@@ -13,9 +14,12 @@ class TranslatorRunnerMiddleware(BaseMiddleware):
     ) -> Any:
         hub: TranslatorHub = data.get('_translator_hub')
         session = db_session.create_session()
-        language_code = db_service.get_user_lang(
+        try:
+            language_code = db_service.get_user_lang(
                 telegram_id=event.from_user.id, session=session
             )
-        print(language_code)
+        except AttributeError:
+            language_code = "ru" if event.from_user.language_code == "ru" else "en"
+
         data['i18n'] = hub.get_translator_by_locale(language_code)
         return await handler(event, data)

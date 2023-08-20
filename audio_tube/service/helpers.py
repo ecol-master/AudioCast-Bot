@@ -4,6 +4,8 @@ from pathlib import Path
 import asyncio
 import os
 import logging
+from fluentogram import TranslatorHub, FluentTranslator
+from fluent_compiler.bundle import FluentBundle
 
 
 def get_message_urls(message: types.Message) -> list[str]:
@@ -38,9 +40,35 @@ def validate_new_caption_length(new_length: str) -> int:
     new_length = int(new_length)
     return 150 if new_length > 150 else new_length
 
+
 def validate_answer_del_link(ans: str) -> bool:
-    if ans.strip().lower() == "да":
+    if ans.strip().lower() in ("да", "yes"):
         return True
-    if ans.strip().lower() == "нет":
+    if ans.strip().lower() in ("нет", "no"):
         return False
     raise ValueError
+
+def get_translator_hub() -> TranslatorHub:
+    ru_filenames = [
+        "./locales/ru/menu_ru.ftl", "./locales/ru/base_cmd_ru.ftl", "./locales/ru/buttons_ru.ftl"  
+    ]
+    en_filenames = [
+        "./locales/en/menu_en.ftl", "./locales/en/base_cmd_en.ftl", "./locales/en/buttons_en.ftl"  
+    ]
+
+    return TranslatorHub(
+        locales_map={
+            "en": ("en", ),
+            "ru":("ru", "en",)
+        },
+        translators=[
+            FluentTranslator(
+                locale="ru",
+                translator=FluentBundle.from_files("ru", filenames=ru_filenames)
+            ),
+            FluentTranslator(
+                locale="en",
+                translator=FluentBundle.from_files("en-US", filenames=en_filenames)
+            )
+        ]
+    )

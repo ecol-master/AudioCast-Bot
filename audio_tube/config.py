@@ -18,6 +18,9 @@ def get_bot_config() -> Config:
 
 OUTPUT_DIR = "data"
 
+DATABASE_FILE = "db/database.db"
+LOG_FILE = "debug.log"
+
 # prefer preview image sizes
 PREVIEW_HEIGHT = 138
 PREVIEW_WIDTH = 246
