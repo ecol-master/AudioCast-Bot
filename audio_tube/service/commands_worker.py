@@ -6,6 +6,7 @@ async def set_bot_commands(bot: Bot) -> None:
     commands = [
         BotCommand(command="help", description="Справка по использованию бота."),
         BotCommand(command="set_caption",
-                   description="Установить длину описания к подкасту.")
+                   description="Установить длину описания к подкасту."),
+        BotCommand(command="cancel", description="Отменить последнюю команду.")
     ]
     await bot.set_my_commands(commands)

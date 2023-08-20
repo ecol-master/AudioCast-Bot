@@ -12,7 +12,7 @@ class Podcast:
     title: str
     performer: str
     duration: str
-    thumb: types.FSInputFile
+    thumbnail: types.FSInputFile
 
     def as_dict(self):
         values = self.__dict__

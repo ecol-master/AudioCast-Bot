@@ -21,8 +21,8 @@ def is_can_download_podcast(telegram_id: int, session: Session) -> bool:
 
 
 # create
-def create_user(telegram_id: int, session: Session) -> User:
-    user = User(telegram_id=telegram_id)
+def create_user(telegram_id: int, session: Session, lang: str) -> User:
+    user = User(telegram_id=telegram_id, lang=lang)
     session.add(user)
     session.commit()
     return user
@@ -48,7 +48,32 @@ def get_settings_caption(telegram_id: int, session: Session) -> int:
     return settings.caption_length
 
 
+def get_user_lang(telegram_id: int, session: Session) -> str:
+    user = session.query(User).filter(User.telegram_id == telegram_id).first()
+    return user.lang
+
 # update
+def update_date_last_podcast_download(telegram_id: int, session: Session) -> User:
+    user = session.query(User).filter(User.telegram_id == telegram_id).first()
+    user.date_last_podcast_download = datetime.datetime.now()
+    session.add(user)
+    session.commit()
+    return user
+
+def update_lang(telegram_id: int, session: Session, new_lang: str) -> User:
+    user = session.query(User).filter(User.telegram_id == telegram_id).first()
+    user.lang = new_lang
+    session.add(user)
+    session.commit()
+    return user
+
+def update_count_of_downloaded_podcast(telegram_id: int, session: Session) -> User:
+    user = session.query(User).filter(User.telegram_id == telegram_id).first()
+    user.count_of_downloaded_podcasts += 1
+    session.add(user)
+    session.commit()
+    return user
+
 def update_settings_caption(telegram_id: int, session: Session,
                             new_length: int) -> UserSettings:
     user = session.query(User).filter(User.telegram_id == telegram_id).first()
@@ -58,10 +83,27 @@ def update_settings_caption(telegram_id: int, session: Session,
     session.commit()
     return settings
 
-
-def update_date_last_podcast_download(telegram_id: int, session: Session) -> User:
+def update_setting_is_del_link(telegram_id: int, session: Session, is_del_link: bool) -> UserSettings:
     user = session.query(User).filter(User.telegram_id == telegram_id).first()
-    user.date_last_podcast_download = datetime.datetime.now()
-    session.add(user)
+    settings: UserSettings = user.settings
+    settings.is_del_link = is_del_link
+    session.add(settings)
     session.commit()
-    return user
+    return settings
+
+
+# admin panel
+
+def get_all_users_count(session: Session) -> int:
+    return len(session.query(User).all())
+
+
+def get_count_of_active_users_per_days(session: Session, days: int) -> int:
+    return len(session.query(User).filter(
+        User.date_last_podcast_download > datetime.datetime.now() -
+        datetime.timedelta(days=days)).all())
+    
+
+def get_total_count_of_downloaded_podcasts(session: Session) -> int:
+    users = session.query(User).all()
+    return sum(user.count_of_downloaded_podcasts for user in users)
