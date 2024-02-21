@@ -2,16 +2,22 @@ from dataclasses import dataclass
 from config import OUTPUT_DIR
 import logging
 from aiogram import types
+from typing import TypeAlias, Literal
 
 
-@dataclass
+Url: TypeAlias = str
+AuthorName: TypeAlias = str
+Seconds: TypeAlias = int
+
+
+@dataclass(frozen=True)
 class Podcast:
     filename: str
     audio: types.FSInputFile
     caption: str
     title: str
-    performer: str
-    duration: str
+    performer: AuthorName
+    duration: Seconds
     thumbnail: types.FSInputFile
 
     def as_dict(self):

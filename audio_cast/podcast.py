@@ -1,33 +1,37 @@
 from yt_dlp import YoutubeDL
 from yt_dlp.utils import UnsupportedError, DownloadError
-from service import Podcast, CantDownloadAudioError, DurationLimitError, YDL_OPTIONS
+from service import Podcast, CantDownloadAudioError, DurationLimitError, YDL_OPTIONS, \
+    Url
 from config import OUTPUT_DIR, PREVIEW_WIDTH, PREVIEW_HEIGHT, MAX_PODCAST_DURATION
 from models.user_settings import UserSettings
 from aiogram import types
 from pathlib import Path
 import requests
+import json
 
 ydl = YoutubeDL(YDL_OPTIONS)
 
 
-def get_podcast(url: str, settings: UserSettings) -> Podcast:
+def get_podcast(url: Url, settings: UserSettings) -> Podcast:
     info = ydl.extract_info(url, download=False)
-    validate_user_data(info)
+    with open("info.json", "w") as file:
+        json.dump(info, file)
+    _validate_podcast_data(info)
 
     preview_url = _parse_preview_url(info=info)
     filename = _parse_filename(info=info)
 
     download(url=url, preview_url=preview_url, filename=filename)
-    return get_podcast_data(settings=settings, filename=filename, info=info)
+    return _parse_podcast_data(settings=settings, filename=filename, info=info)
 
 
-def validate_user_data(info: dict):
+def _validate_podcast_data(info: dict) -> None:
     duration = info.get("duration", 0)
     if duration > MAX_PODCAST_DURATION:
         raise DurationLimitError
 
 
-def get_podcast_data(settings: UserSettings, filename: str, info: dict) -> Podcast:
+def _parse_podcast_data(settings: UserSettings, filename: str, info: dict) -> Podcast:
     return Podcast(
         filename=filename,
         audio=types.FSInputFile(path=Path("data", f"{filename}.m4a")),
@@ -37,21 +41,20 @@ def get_podcast_data(settings: UserSettings, filename: str, info: dict) -> Podca
         performer=info.get("uploader", ""),
         duration=info.get("duration", 0),
         thumbnail=types.FSInputFile(path=Path("data", f"{filename}.jpg")),
-
     )
 
 
 def download(url: str, preview_url: str, filename: str) -> None:
     try:
         ydl.download(url)
-        download_preview(filename=filename, preview_url=preview_url)
+        _download_preview(filename=filename, preview_url=preview_url)
     except DownloadError:
         raise CantDownloadAudioError
     except UnsupportedError:
         raise CantDownloadAudioError
 
 
-def download_preview(filename: str, preview_url: str):
+def _download_preview(filename: str, preview_url: str) -> None:
     headers = {
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.0"
@@ -71,7 +74,7 @@ def _validate_caption(caption: str, caption_length: int) -> str:
     return caption
 
 
-def _parse_preview_url(info: dict) -> str:
+def _parse_preview_url(info: dict) -> Url:
     thumbnails = info.get("thumbnails", [])
     if not thumbnails:
         raise CantDownloadAudioError

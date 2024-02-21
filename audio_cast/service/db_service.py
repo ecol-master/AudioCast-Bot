@@ -1,7 +1,6 @@
 from sqlalchemy.orm import Session
 from models.users import User
 from models.user_settings import UserSettings
-from config import MIN_DIFF_DOWNLOAD
 import datetime
 
 
@@ -14,9 +13,9 @@ def is_can_download_podcast(telegram_id: int, session: Session) -> bool:
     user = session.query(User).filter(User.telegram_id == telegram_id).first()
     if user.date_last_podcast_download is None:
         return True
-
+    settings: UserSettings = user.settings
     check_date = user.date_last_podcast_download + datetime.timedelta(
-        minutes=MIN_DIFF_DOWNLOAD)
+        minutes=settings.min_diff_download)
     return datetime.datetime.now() > check_date
 
 
@@ -87,6 +86,14 @@ def update_setting_is_del_link(telegram_id: int, session: Session, is_del_link: 
     user = session.query(User).filter(User.telegram_id == telegram_id).first()
     settings: UserSettings = user.settings
     settings.is_del_link = is_del_link
+    session.add(settings)
+    session.commit()
+    return settings
+
+def update_min_diff_download(telegram_id: int, session: Session, new_value: int) -> UserSettings:
+    user = session.query(User).filter(User.telegram_id == telegram_id).first()
+    settings: UserSettings = user.settings
+    settings.min_diff_download = new_value
     session.add(settings)
     session.commit()
     return settings

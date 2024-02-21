@@ -1,5 +1,5 @@
 from aiogram import Bot, Dispatcher
-from handlers import dl_podcast, menu, base_cmd
+from handlers import dl_podcast, menu, base_cmd, admin
 from config import get_bot_config, DATABASE_FILE, LOG_FILE
 from models import db_session
 from service import set_bot_commands, get_translator_hub
@@ -22,7 +22,8 @@ async def main():
     dp.callback_query.middleware(TranslatorRunnerMiddleware())
 
     dp.include_routers(
-        base_cmd.router, menu.router, dl_podcast.router
+        admin.router, base_cmd.router, 
+        menu.router, dl_podcast.router
     )
 
     await bot.delete_webhook(drop_pending_updates=True)
