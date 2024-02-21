@@ -6,13 +6,16 @@ import dotenv
 class Config:
     bot_token: str
     admin_id: int
+    allowed_list: list[int]
 
 
 def get_bot_config() -> Config:
     env: dict = dotenv.dotenv_values()
+    admin_id = int(env.get("ADMIN_ID", "No admin id"))
     return Config(
         bot_token=env.get("TOKEN", "No Token"),
-        admin_id=int(env.get("ADMIN_ID", "No admin id"))
+        admin_id=admin_id,
+        allowed_list=[admin_id]
     )
 
 
@@ -29,4 +32,4 @@ PREVIEW_WIDTH = 246
 MAX_PODCAST_DURATION = 9000
 
 # minimum difference between two loads (minutes)
-MIN_DIFF_DOWNLOAD = 3
+# MIN_DIFF_DOWNLOAD = 3

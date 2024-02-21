@@ -25,11 +25,9 @@ async def cmd_start(message: types.Message, i18n: TranslatorRunner) -> None:
         settings = db_service.create_user_settings(user_id=user.id, session=session)
         logging.info(f"Created new user: telegram id - {user.telegram_id}")
 
-
 @router.message(Command("help"))
 async def cmd_help(message: types.Message, i18n: TranslatorRunner) -> None:
     await message.answer(text=i18n.help.text())
-
 
 @router.message(Command("cancel"))
 async def cmd_cancel(message: types.Message, state: FSMContext,
@@ -44,6 +42,7 @@ async def cmd_cancel(message: types.Message, state: FSMContext,
 @router.message(Command("get_admin_statistic"), F.from_user.id == config.admin_id)
 async def cmd_get_admin_statistic(message: types.Message, i18n: TranslatorRunner) -> None:
     session = db_session.create_session()
+
 
     statistic_text = i18n.admin.statistic.text(
         all_users=db_service.get_all_users_count(session),
