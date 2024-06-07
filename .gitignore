@@ -5,3 +5,6 @@ audio_cast/data
 audio_cast/debug.log
 audio_cast/db
 venv/
+.DS_Store
+src/debug.log
+src/db/database.db

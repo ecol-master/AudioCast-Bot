@@ -21,12 +21,10 @@ def get_message_urls(message: types.Message) -> list[str]:
 async def rm_downloaded_files(filename: str):
     content = os.listdir(Path(f"{OUTPUT_DIR}"))
     downloaded_files = filter(lambda f: f.startswith(filename), content)
-    tasks = []
-    for file in downloaded_files:
-        task = asyncio.create_task(remove_file(file))
-        tasks.append(task)
-    await asyncio.gather(*tasks)
 
+    async with asyncio.TaskGroup() as tg:
+        for file in downloaded_files:
+            tg.create_task(remove_file(file))
 
 async def remove_file(file: str):
     os.remove(Path(f"{OUTPUT_DIR}", file))

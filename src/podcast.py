@@ -8,19 +8,19 @@ from aiogram import types
 from pathlib import Path
 import requests
 import json
+import os
+import logging
 
 ydl = YoutubeDL(YDL_OPTIONS)
 
 
 def get_podcast(url: Url, settings: UserSettings) -> Podcast:
     info = ydl.extract_info(url, download=False)
-    with open("info.json", "w") as file:
-        json.dump(info, file)
     _validate_podcast_data(info)
-
+    
     preview_url = _parse_preview_url(info=info)
     filename = _parse_filename(info=info)
-
+    
     download(url=url, preview_url=preview_url, filename=filename)
     return _parse_podcast_data(settings=settings, filename=filename, info=info)
 
@@ -34,34 +34,41 @@ def _validate_podcast_data(info: dict) -> None:
 def _parse_podcast_data(settings: UserSettings, filename: str, info: dict) -> Podcast:
     return Podcast(
         filename=filename,
-        audio=types.FSInputFile(path=Path("data", f"{filename}.m4a")),
+        audio=types.FSInputFile(path=Path(f"{filename}.m4a")),
         caption=_validate_caption(caption=info.get("description", ""),
                                   caption_length=settings.caption_length),
         title=info.get("title", ""),
         performer=info.get("uploader", ""),
         duration=info.get("duration", 0),
-        thumbnail=types.FSInputFile(path=Path("data", f"{filename}.jpg")),
+        thumbnail=types.FSInputFile(path=get_thumbnail_path(filename=filename)),
     )
 
 
 def download(url: str, preview_url: str, filename: str) -> None:
     try:
         ydl.download(url)
-        _download_preview(filename=filename, preview_url=preview_url)
+        _download_thumbnail(filename=filename, preview_url=preview_url)
     except DownloadError:
         raise CantDownloadAudioError
     except UnsupportedError:
         raise CantDownloadAudioError
 
+def get_thumbnail_path(filename: str) -> Path:
+    try:
+        preview_path = Path(f"{filename}.jpg")
+        with open(preview_path, "r"):
+            return preview_path
+    except FileNotFoundError as _err:
+        return Path(".", "data", "default_thumbnail.jpg")
 
-def _download_preview(filename: str, preview_url: str) -> None:
+def _download_thumbnail(filename: str, preview_url: str) -> None:
     headers = {
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.0"
     }
     response = requests.get(url=preview_url, headers=headers, stream=True)
     if response.status_code == 200:
-        preview_path = Path(f"{OUTPUT_DIR}", f"{filename}.jpg")
+        preview_path = Path(f"{filename}.jpg")
         with open(f"{preview_path}", 'wb') as f:
             f.write(response.content)
 

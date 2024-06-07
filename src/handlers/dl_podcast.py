@@ -50,7 +50,7 @@ async def process_podcast_download(message: types.Message, bot: Bot, session: Se
             await bot.delete_message(chat_id=message.chat.id,
                                      message_id=message.message_id)
 
-        await rm_downloaded_files(podcast.filename)
+        await rm_downloaded_files(podcast.title)
 
     except CantDownloadAudioError:
         await message.answer(text=i18n.download_audio_error.text())
@@ -59,7 +59,7 @@ async def process_podcast_download(message: types.Message, bot: Bot, session: Se
         await message.answer(text=i18n.duration_limit_error.text())
 
     except Exception as _err:
-        logging.error(f"{_err}")
+        logging.error(f"Error: {_err}")
     finally:
         await bot.delete_message(chat_id=load_message.chat.id,
                                  message_id=load_message.message_id)

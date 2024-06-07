@@ -6,15 +6,13 @@ from service import set_bot_commands, get_translator_hub
 from middlewares.translator import TranslatorRunnerMiddleware
 import asyncio
 import logging
-
-
 async def main():
     logging.basicConfig(filename=LOG_FILE, filemode="w", level=logging.DEBUG)
     db_session.global_init(db_file=DATABASE_FILE)
 
     config = get_bot_config()
 
-    bot = Bot(token=config.bot_token, parse_mode="HTML")
+    bot = Bot(token=config.bot_token)
     await set_bot_commands(bot)
 
     dp = Dispatcher()
@@ -34,4 +32,4 @@ if __name__ == "__main__":
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
-        logging.info("Программа завершена")
+        logging.info("Programm closed.")

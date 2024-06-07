@@ -11,6 +11,7 @@ router = Router()
 config = get_bot_config()
 
 
+# command "start"
 @router.message(Command("start"))
 async def cmd_start(message: types.Message, i18n: TranslatorRunner) -> None:
     lang = "ru" if message.from_user.language_code == "ru" else "en"
@@ -22,13 +23,15 @@ async def cmd_start(message: types.Message, i18n: TranslatorRunner) -> None:
                                               session=session):
         user = db_service.create_user(telegram_id=message.from_user.id, session=session,
                                       lang=lang)
-        settings = db_service.create_user_settings(user_id=user.id, session=session)
+        db_service.create_user_settings(user_id=user.id, session=session)
         logging.info(f"Created new user: telegram id - {user.telegram_id}")
 
+# command "help"
 @router.message(Command("help"))
 async def cmd_help(message: types.Message, i18n: TranslatorRunner) -> None:
     await message.answer(text=i18n.help.text())
 
+# command "cancel"
 @router.message(Command("cancel"))
 async def cmd_cancel(message: types.Message, state: FSMContext,
                      i18n: TranslatorRunner) -> None:

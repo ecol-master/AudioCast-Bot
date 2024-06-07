@@ -8,7 +8,6 @@ class MenuCallback(CallbackData, prefix="menu"):
     stage: int
 
 # Menu Settings
-#
 def get_menu_kb(i18n: TranslatorRunner) -> types.InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.row(
