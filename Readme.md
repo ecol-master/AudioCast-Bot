@@ -79,6 +79,13 @@ venv/bin/activate
 pip install -r requirements.txt
 ```
 
+Сейчас:
+```
+python -m bot
+```
+
+Раньше:
+
 Дальше переходим в папка проекта ```./audio_cast/``` командой:
 ```
 cd audio_cast
