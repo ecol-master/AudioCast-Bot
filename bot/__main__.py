@@ -1,9 +1,9 @@
 from aiogram import Bot, Dispatcher
-from handlers import dl_podcast, menu, base_cmd, admin
-from config import get_bot_config, DATABASE_FILE, LOG_FILE
-from models import db_session
-from service import set_bot_commands, get_translator_hub
-from middlewares.translator import TranslatorRunnerMiddleware
+from bot.handlers import dl_podcast, menu, base_cmd, admin
+from bot.config import get_bot_config, DATABASE_FILE, LOG_FILE
+from bot.models import db_session
+from bot.service import set_bot_commands, get_translator_hub
+from bot.middlewares.translator import TranslatorRunnerMiddleware
 import asyncio
 import logging
 async def main():

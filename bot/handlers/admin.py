@@ -1,8 +1,8 @@
 from aiogram import Router, types, F
 from aiogram.filters import Command, Filter
-import config
-from service import db_service
-from models import db_session
+import bot.config as config
+from bot.service import db_service
+from bot.models import db_session
 from fluentogram import TranslatorRunner
 
 router = Router()

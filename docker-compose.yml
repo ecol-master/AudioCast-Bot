@@ -1,0 +1,10 @@
+version: "1.0"
+services:
+  bot:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: audiotube_bot
+    platform: linux/x86_64
+    restart: unless-stopped
+

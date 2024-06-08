@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from config import OUTPUT_DIR
+from bot.config import OUTPUT_DIR
 import logging
 from aiogram import types
 from typing import TypeAlias

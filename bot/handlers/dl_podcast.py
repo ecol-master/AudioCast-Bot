@@ -1,10 +1,10 @@
 from aiogram import types, Bot, Router
-from service import get_message_urls, db_service, CantDownloadAudioError, \
+from bot.service import get_message_urls, db_service, CantDownloadAudioError, \
     DurationLimitError, rm_downloaded_files
-from models import db_session
-from models.user_settings import UserSettings
+from bot.models import db_session
+from bot.models.user_settings import UserSettings
 from sqlalchemy.orm import Session
-from podcast import get_podcast
+from bot.podcast import get_podcast
 from fluentogram import TranslatorRunner
 import logging
 

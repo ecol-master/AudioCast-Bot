@@ -1,9 +1,9 @@
 from aiogram import Router, types, F, Bot
 from aiogram.filters import Command
-from keyboards import MenuCallback, get_menu_kb, get_settings_kb, \
+from bot.keyboards import MenuCallback, get_menu_kb, get_settings_kb, \
             get_settings_del_link_kb, get_languages_kb
-from models import db_session
-from service import db_service, validate_new_caption_length, \
+from bot.models import db_session
+from bot.service import db_service, validate_new_caption_length, \
     validate_answer_del_link
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext

@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from models.users import User
-from models.user_settings import UserSettings
+from bot.models.users import User
+from bot.models.user_settings import UserSettings
 import datetime
 
 

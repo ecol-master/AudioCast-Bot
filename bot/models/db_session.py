@@ -3,6 +3,8 @@ import sqlalchemy.orm as orm
 from sqlalchemy.orm import Session
 import sqlalchemy.ext.declarative as dec
 import logging
+from pathlib import Path
+import os
 
 SqlAlchemyBase = dec.declarative_base()
 
@@ -18,6 +20,8 @@ def global_init(db_file):
     if not db_file or not db_file.strip():
         raise Exception("Необходимо указать файл базы данных.")
 
+    check_exists_db_folder()
+
     conn_str = f'sqlite:///{db_file.strip()}?check_same_thread=False'
     logging.info(f"Подключение к базе данных по адресу {conn_str}")
 
@@ -31,3 +35,8 @@ def global_init(db_file):
 def create_session() -> Session:
     global __factory
     return __factory()
+
+def check_exists_db_folder() -> None:
+    db_dir = Path("db")
+    if not os.path.exists(db_dir):
+        os.makedirs(db_dir)

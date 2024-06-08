@@ -1,5 +1,5 @@
 from aiogram import types
-from config import OUTPUT_DIR
+from bot.config import OUTPUT_DIR
 from pathlib import Path
 import asyncio
 import os
@@ -48,12 +48,12 @@ def validate_answer_del_link(ans: str) -> bool:
 
 def get_translator_hub() -> TranslatorHub:
     ru_filenames = [
-        "./locales/ru/menu_ru.ftl", "./locales/ru/base_cmd_ru.ftl", "./locales/ru/buttons_ru.ftl",
-        "./locales/ru/admin_ru.ftl"  
+        "./bot/locales/ru/menu_ru.ftl", "./bot/locales/ru/base_cmd_ru.ftl", "./bot/locales/ru/buttons_ru.ftl",
+        "./bot/locales/ru/admin_ru.ftl"  
     ]
     en_filenames = [
-        "./locales/en/menu_en.ftl", "./locales/en/base_cmd_en.ftl", "./locales/en/buttons_en.ftl",
-        "./locales/en/admin_en.ftl"
+        "./bot/locales/en/menu_en.ftl", "./bot/locales/en/base_cmd_en.ftl", "./bot/locales/en/buttons_en.ftl",
+        "./bot/locales/en/admin_en.ftl"
     ]
 
     return TranslatorHub(
