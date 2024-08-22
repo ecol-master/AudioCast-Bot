@@ -9,11 +9,11 @@ from fluent_compiler.bundle import FluentBundle
 
 
 def get_message_urls(message: types.Message) -> list[str]:
-    entities: list[types.MessageEntity] = message.entities
+    entities: list[types.MessageEntity] | None = message.entities
     if not entities:
         return []
 
-    urls = [item.extract_from(message.text) for item in entities if item.type == "url"]
+    urls = [item.extract_from(message.text) for item in entities if item.type == "url" and message.text]
     return urls
 
 

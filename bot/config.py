@@ -12,6 +12,7 @@ class Config:
 def get_bot_config() -> Config:
     env: dict = dotenv.dotenv_values()
     admin_id = int(env.get("ADMIN_ID", "No admin id"))
+
     return Config(
         bot_token=env.get("TOKEN", "No Token"),
         admin_id=admin_id,

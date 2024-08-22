@@ -33,7 +33,7 @@ def _parse_podcast_data(settings: UserSettings, filename: str, info: dict) -> Po
         filename=filename,
         audio=types.FSInputFile(path=Path(f"{filename}.m4a")),
         caption=_validate_caption(caption=info.get("description", ""),
-                                  caption_length=settings.caption_length),
+                                  caption_length=settings.caption_length.to_numeric()),
         title=info.get("title", ""),
         performer=info.get("uploader", ""),
         duration=info.get("duration", 0),
@@ -55,7 +55,7 @@ def get_thumbnail_path(filename: str) -> Path:
         preview_path = Path(f"{filename}.jpg")
         with open(preview_path, "r"):
             return preview_path
-    except FileNotFoundError as _err:
+    except FileNotFoundError:
         return Path(".", "data", "default_thumbnail.jpg")
 
 def _download_thumbnail(filename: str, preview_url: str) -> None:

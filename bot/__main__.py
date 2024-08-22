@@ -6,6 +6,8 @@ from bot.service import set_bot_commands, get_translator_hub
 from bot.middlewares.translator import TranslatorRunnerMiddleware
 import asyncio
 import logging
+
+
 async def main():
     logging.basicConfig(filename=LOG_FILE, filemode="w", level=logging.DEBUG)
     db_session.global_init(db_file=DATABASE_FILE)
