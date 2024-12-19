@@ -1,5 +1,5 @@
 from aiogram import types
-from config import OUTPUT_DIR
+from audio_cast.config import OUTPUT_DIR
 from pathlib import Path
 import asyncio
 import os

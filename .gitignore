@@ -5,3 +5,8 @@ audio_cast/data
 audio_cast/debug.log
 audio_cast/db
 venv/
+env/
+data/
+db
+debug.log
+

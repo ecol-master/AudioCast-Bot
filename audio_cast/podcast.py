@@ -1,9 +1,9 @@
 from yt_dlp import YoutubeDL
 from yt_dlp.utils import UnsupportedError, DownloadError
-from service import Podcast, CantDownloadAudioError, DurationLimitError, YDL_OPTIONS, \
+from audio_cast.service import Podcast, CantDownloadAudioError, DurationLimitError, YDL_OPTIONS, \
     Url
-from config import OUTPUT_DIR, PREVIEW_WIDTH, PREVIEW_HEIGHT, MAX_PODCAST_DURATION
-from models.user_settings import UserSettings
+from audio_cast.config import OUTPUT_DIR, PREVIEW_WIDTH, PREVIEW_HEIGHT, MAX_PODCAST_DURATION
+from audio_cast.models.user_settings import UserSettings
 from aiogram import types
 from pathlib import Path
 import requests
@@ -22,6 +22,7 @@ def get_podcast(url: Url, settings: UserSettings) -> Podcast:
     filename = _parse_filename(info=info)
 
     download(url=url, preview_url=preview_url, filename=filename)
+    #_download_preview(filename, preview_url)
     return _parse_podcast_data(settings=settings, filename=filename, info=info)
 
 
@@ -34,20 +35,20 @@ def _validate_podcast_data(info: dict) -> None:
 def _parse_podcast_data(settings: UserSettings, filename: str, info: dict) -> Podcast:
     return Podcast(
         filename=filename,
-        audio=types.FSInputFile(path=Path("data", f"{filename}.m4a")),
+        audio=types.FSInputFile(path=Path(f"{filename}.m4a")),
         caption=_validate_caption(caption=info.get("description", ""),
                                   caption_length=settings.caption_length),
         title=info.get("title", ""),
         performer=info.get("uploader", ""),
         duration=info.get("duration", 0),
-        thumbnail=types.FSInputFile(path=Path("data", f"{filename}.jpg")),
+        #thumbnail=types.FSInputFile(path=Path(f"{filename}.jpg")),
     )
 
 
 def download(url: str, preview_url: str, filename: str) -> None:
     try:
         ydl.download(url)
-        _download_preview(filename=filename, preview_url=preview_url)
+        #_download_preview(filename=filename, preview_url=preview_url)
     except DownloadError:
         raise CantDownloadAudioError
     except UnsupportedError:

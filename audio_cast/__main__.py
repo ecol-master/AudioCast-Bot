@@ -1,9 +1,9 @@
 from aiogram import Bot, Dispatcher
-from handlers import dl_podcast, menu, base_cmd, admin
-from config import get_bot_config, DATABASE_FILE, LOG_FILE
-from models import db_session
-from service import set_bot_commands, get_translator_hub
-from middlewares.translator import TranslatorRunnerMiddleware
+from audio_cast.handlers import dl_podcast, menu, base_cmd, admin
+from audio_cast.config import get_bot_config, DATABASE_FILE, LOG_FILE
+from audio_cast.models import db_session
+from audio_cast.service import set_bot_commands, get_translator_hub
+from audio_cast.middlewares.translator import TranslatorRunnerMiddleware
 import asyncio
 import logging
 

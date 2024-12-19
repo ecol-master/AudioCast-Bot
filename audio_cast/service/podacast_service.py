@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from config import OUTPUT_DIR
+from audio_cast.config import OUTPUT_DIR
 import logging
 from aiogram import types
 from typing import TypeAlias, Literal
@@ -18,7 +18,7 @@ class Podcast:
     title: str
     performer: AuthorName
     duration: Seconds
-    thumbnail: types.FSInputFile
+    #thumbnail: types.FSInputFile
 
     def as_dict(self):
         values = self.__dict__

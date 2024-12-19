@@ -1,9 +1,9 @@
 from aiogram import Router, types, F
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
-from models import db_session
-from service import db_service
-from config import get_bot_config
+from audio_cast.models import db_session
+from audio_cast.service import db_service
+from audio_cast.config import get_bot_config
 from fluentogram import TranslatorRunner
 import logging
 

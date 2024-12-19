@@ -1,8 +1,8 @@
 from aiogram import Router, types, F
 from aiogram.filters import Command, Filter
-import config
-from service import db_service
-from models import db_session
+import audio_cast.config as config
+from audio_cast.service import db_service
+from audio_cast.models import db_session
 from fluentogram import TranslatorRunner
 
 router = Router()

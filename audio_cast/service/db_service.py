@@ -1,8 +1,10 @@
 from sqlalchemy.orm import Session
-from models.users import User
-from models.user_settings import UserSettings
+from audio_cast.models.users import User
+from audio_cast.models.user_settings import UserSettings
 import datetime
+import audio_cast.config as config
 
+bot_config = config.get_bot_config()
 
 def is_user_already_created(telegram_id: int, session: Session) -> bool:
     user = session.query(User).filter(User.telegram_id == telegram_id).first()
@@ -10,6 +12,9 @@ def is_user_already_created(telegram_id: int, session: Session) -> bool:
 
 
 def is_can_download_podcast(telegram_id: int, session: Session) -> bool:
+    if telegram_id == bot_config.admin_id:
+        return True
+
     user = session.query(User).filter(User.telegram_id == telegram_id).first()
     if user.date_last_podcast_download is None:
         return True
