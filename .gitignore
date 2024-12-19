@@ -2,8 +2,19 @@ __pycache__
 .env
 .idea
 audio_cast/data
+<<<<<<< HEAD
 venv/
 .DS_Store
 
 *.db
 *.log
+=======
+audio_cast/debug.log
+audio_cast/db
+venv/
+env/
+data/
+db
+debug.log
+
+>>>>>>> 37f76ad (fix: something was wrong)
