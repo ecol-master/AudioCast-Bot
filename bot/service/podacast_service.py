@@ -1,8 +1,8 @@
 from dataclasses import dataclass
-from audio_cast.config import OUTPUT_DIR
+from bot.config import OUTPUT_DIR
 import logging
 from aiogram import types
-from typing import TypeAlias, Literal
+from typing import TypeAlias
 
 
 Url: TypeAlias = str

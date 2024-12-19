@@ -1,5 +1,5 @@
 from aiogram import types
-from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
+from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.filters.callback_data import CallbackData
 from fluentogram import TranslatorRunner
 

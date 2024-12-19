@@ -1,9 +1,9 @@
 from yt_dlp import YoutubeDL
 from yt_dlp.utils import UnsupportedError, DownloadError
-from audio_cast.service import Podcast, CantDownloadAudioError, DurationLimitError, YDL_OPTIONS, \
+from bot.service import Podcast, CantDownloadAudioError, DurationLimitError, YDL_OPTIONS, \
     Url
-from audio_cast.config import OUTPUT_DIR, PREVIEW_WIDTH, PREVIEW_HEIGHT, MAX_PODCAST_DURATION
-from audio_cast.models.user_settings import UserSettings
+from bot.config import OUTPUT_DIR, PREVIEW_WIDTH, PREVIEW_HEIGHT, MAX_PODCAST_DURATION
+from bot.models.user_settings import UserSettings
 from aiogram import types
 from pathlib import Path
 import requests

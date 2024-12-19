@@ -1,8 +1,8 @@
 from typing import Callable, Dict, Any, Awaitable
 from fluentogram import TranslatorHub
 from aiogram import BaseMiddleware, types
-from audio_cast.service import db_service
-from audio_cast.models import db_session
+from bot.service import db_service
+from bot.models import db_session
 
 
 class TranslatorRunnerMiddleware(BaseMiddleware):

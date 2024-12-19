@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Session
-from audio_cast.models.users import User
-from audio_cast.models.user_settings import UserSettings
+from bot.models.users import User
+from bot.models.user_settings import UserSettings
+import bot.config as config
 import datetime
-import audio_cast.config as config
 
 bot_config = config.get_bot_config()
 
