@@ -4,12 +4,19 @@ from bot.config import get_bot_config, DATABASE_FILE, LOG_FILE
 from bot.models import db_session
 from bot.service import set_bot_commands, get_translator_hub
 from bot.middlewares.translator import TranslatorRunnerMiddleware
+from pathlib import Path
 import asyncio
 import logging
 
 
+def create_directories():
+    directories = ["data", "db"]
+    for directory in directories:
+        Path(directory).mkdir(parents=True, exist_ok=True)
+
+
 async def main():
-    logging.basicConfig(filename=LOG_FILE, filemode="w", level=logging.DEBUG)
+    logging.basicConfig(filemode="w", level=logging.DEBUG)
     db_session.global_init(db_file=DATABASE_FILE)
 
     config = get_bot_config()
@@ -31,6 +38,7 @@ async def main():
 
 
 if __name__ == "__main__":
+    create_directories()
     try:
         asyncio.run(main())
     except KeyboardInterrupt:

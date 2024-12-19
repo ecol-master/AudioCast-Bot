@@ -7,15 +7,14 @@ from bot.models.user_settings import UserSettings
 from aiogram import types
 from pathlib import Path
 import requests
-import json
 
 ydl = YoutubeDL(YDL_OPTIONS)
 
 
 def get_podcast(url: Url, settings: UserSettings) -> Podcast:
     info = ydl.extract_info(url, download=False)
-    with open("info.json", "w") as file:
-        json.dump(info, file)
+    #with open("info.json", "w") as file:
+    #    json.dump(info, file)
     _validate_podcast_data(info)
 
     preview_url = _parse_preview_url(info=info)
