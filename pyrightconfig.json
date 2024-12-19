@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 {
   "venv" : "env",
   "venvPath": "."
@@ -6,3 +7,6 @@
 =======
 {"venv": "env", "venvPath": "."}
 >>>>>>> 37f76ad (fix: something was wrong)
+=======
+{"venv": "env", "venvPath": "."}
+>>>>>>> develop

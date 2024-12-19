@@ -17,4 +17,7 @@ data/
 db
 debug.log
 
+<<<<<<< HEAD
 >>>>>>> 37f76ad (fix: something was wrong)
+=======
+>>>>>>> develop
