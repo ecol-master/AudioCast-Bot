@@ -34,7 +34,7 @@ def _validate_podcast_data(info: dict) -> None:
 def _parse_podcast_data(settings: UserSettings, filename: str, info: dict) -> Podcast:
     return Podcast(
         filename=filename,
-        audio=types.FSInputFile(path=Path(f"{filename}.m4a")),
+        audio=types.FSInputFile(path=Path(f"{filename}.webm")),
         caption=_validate_caption(caption=info.get("description", ""),
                                   caption_length=settings.caption_length),
         title=info.get("title", ""),
