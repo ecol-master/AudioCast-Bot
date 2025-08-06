@@ -13,8 +13,6 @@ ydl = YoutubeDL(YDL_OPTIONS)
 
 def get_podcast(url: Url, settings: UserSettings) -> Podcast:
     info = ydl.extract_info(url, download=False)
-    #with open("info.json", "w") as file:
-    #    json.dump(info, file)
     _validate_podcast_data(info)
 
     preview_url = _parse_preview_url(info=info)
@@ -34,7 +32,7 @@ def _validate_podcast_data(info: dict) -> None:
 def _parse_podcast_data(settings: UserSettings, filename: str, info: dict) -> Podcast:
     return Podcast(
         filename=filename,
-        audio=types.FSInputFile(path=Path(f"{filename}.webm")),
+        audio=types.FSInputFile(path=Path(f"./{filename}.m4a")),
         caption=_validate_caption(caption=info.get("description", ""),
                                   caption_length=settings.caption_length),
         title=info.get("title", ""),

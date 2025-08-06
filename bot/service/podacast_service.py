@@ -55,5 +55,5 @@ YDL_OPTIONS = {
     'writesubtitles': False,
     'skip-download': False,
     'outtmpl': f'./{OUTPUT_DIR}/%(title)s.%(ext)s',
-    "format": "250"
+    "format": "140"
 }
